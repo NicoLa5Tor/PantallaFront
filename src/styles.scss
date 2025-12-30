@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --page-bg-start: #f8fafc;
+  --page-bg-mid: #ffffff;
+  --page-bg-end: #e2e8f0;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  @apply text-slate-900 font-body antialiased;
+  background: linear-gradient(180deg, var(--page-bg-start), var(--page-bg-mid) 45%, var(--page-bg-end));
+}
+
+html.dark {
+  color-scheme: dark;
+  --page-bg-start: #0b1220;
+  --page-bg-mid: #0f172a;
+  --page-bg-end: #111827;
+}
+
+html.dark body {
+  @apply text-slate-100;
+}

@@ -1,0 +1,67 @@
+<div class="min-h-screen text-slate-900 dark:text-slate-100">
+  <div class="mx-auto flex min-h-screen max-w-4xl flex-col gap-10 px-5 py-10 sm:px-8 sm:py-12">
+    <header class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div>
+        <p class="text-xs uppercase tracking-[0.3em] text-slate-400 dark:text-slate-500">RESCUE</p>
+        <h1 class="text-3xl font-semibold tracking-tight md:text-4xl">Configuracion de pantalla</h1>
+        <p class="mt-2 text-base text-slate-500 dark:text-slate-400">
+          Define empresa y sede para crear la ruta dinamica.
+        </p>
+      </div>
+      <button
+        type="button"
+        class="w-full rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-slate-200 transition hover:bg-white dark:bg-slate-900/80 dark:text-slate-200 dark:ring-slate-700 sm:w-auto"
+        (click)="themeService.toggle()"
+      >
+        Tema: {{ themeService.theme === 'light' ? 'Claro' : 'Oscuro' }}
+      </button>
+    </header>
+
+    <section class="rounded-[36px] bg-white/80 p-8 shadow-[0_25px_70px_rgba(15,23,42,0.12)] ring-1 ring-slate-100 backdrop-blur-xl dark:bg-slate-900/80 dark:ring-slate-800">
+      <div class="grid gap-6 md:grid-cols-2">
+        <label class="flex flex-col gap-2 text-sm font-medium">
+          Empresa
+          <input
+            type="text"
+            class="w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-3 text-base text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-200/60 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-100 dark:focus:border-slate-500 dark:focus:ring-slate-700/60"
+            placeholder="pruebanueva"
+            [(ngModel)]="empresa"
+          />
+        </label>
+        <label class="flex flex-col gap-2 text-sm font-medium">
+          Sede
+          <input
+            type="text"
+            class="w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-3 text-base text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-200/60 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-100 dark:focus:border-slate-500 dark:focus:ring-slate-700/60"
+            placeholder="Principal"
+            [(ngModel)]="sede"
+          />
+        </label>
+      </div>
+
+      <div class="mt-8 rounded-2xl border border-slate-200 bg-slate-50/80 px-6 py-5 text-sm text-slate-600 backdrop-blur dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300">
+        <p class="text-xs uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">Ruta preview</p>
+        <p class="mt-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
+          {{ topicPreview }}
+        </p>
+      </div>
+
+      @if (error) {
+        <p class="mt-4 text-sm font-medium text-rose-500">{{ error }}</p>
+      }
+
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p class="text-xs text-slate-400 dark:text-slate-500">
+          Segmentos fijos: empresas / PANTALLA
+        </p>
+        <button
+          type="button"
+          class="rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition hover:-translate-y-0.5 hover:shadow-slate-900/30 dark:bg-white dark:text-slate-900"
+          (click)="onSubmit()"
+        >
+          Continuar
+        </button>
+      </div>
+    </section>
+  </div>
+</div>

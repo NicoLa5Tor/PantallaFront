@@ -1,0 +1,53 @@
+<div class="min-h-screen text-slate-900 dark:text-slate-100">
+  <div class="mx-auto flex min-h-screen max-w-5xl flex-col gap-10 px-5 py-10 sm:px-8 sm:py-12">
+    <header class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div>
+        <p class="text-xs uppercase tracking-[0.3em] text-slate-400 dark:text-slate-500">RESCUE</p>
+        <h1 class="text-3xl font-semibold tracking-tight md:text-4xl">Canal de alertas</h1>
+        <p class="mt-2 text-base text-slate-500 dark:text-slate-400">
+          Esperando datos del webhook configurado.
+        </p>
+      </div>
+      <div class="flex flex-col gap-3 sm:flex-row">
+        <button
+          type="button"
+          class="rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-slate-200 transition hover:bg-white dark:bg-slate-900/80 dark:text-slate-200 dark:ring-slate-700"
+          (click)="themeService.toggle()"
+        >
+          Tema: {{ themeService.theme === 'light' ? 'Claro' : 'Oscuro' }}
+        </button>
+        <button
+          type="button"
+          class="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition hover:-translate-y-0.5 dark:bg-white dark:text-slate-900"
+          (click)="goBack()"
+        >
+          Editar
+        </button>
+      </div>
+    </header>
+
+    <section class="rounded-[36px] bg-white/80 p-10 shadow-[0_25px_70px_rgba(15,23,42,0.12)] ring-1 ring-slate-100 backdrop-blur-xl dark:bg-slate-900/80 dark:ring-slate-800">
+      <div class="flex flex-col items-center gap-6 text-center">
+        <div class="relative h-16 w-16">
+          <div class="absolute inset-0 rounded-full border-[6px] border-slate-200 dark:border-slate-700"></div>
+          <div class="absolute inset-0 animate-spin rounded-full border-[6px] border-slate-900 border-t-transparent dark:border-slate-100 dark:border-t-transparent"></div>
+          <div class="absolute inset-3 rounded-full bg-slate-900/90 dark:bg-white/90"></div>
+        </div>
+
+        <div>
+          <p class="text-lg font-semibold">Escuchando alertas</p>
+          <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            Se mostraran aqui cuando llegue el webhook.
+          </p>
+        </div>
+
+        <div class="w-full max-w-2xl rounded-2xl border border-slate-200 bg-slate-50/80 px-6 py-5 text-sm text-slate-600 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300">
+          <p class="text-xs uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">Ruta activa</p>
+          <p class="mt-2 text-lg font-semibold text-slate-900 dark:text-slate-100">
+            empresas/{{ empresa$ | async }}/{{ sede$ | async }}/PANTALLA
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
