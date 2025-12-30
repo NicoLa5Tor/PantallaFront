@@ -6,27 +6,25 @@ import { map } from 'rxjs';
 
 import { ThemeService } from '../../core/services/theme.service';
 import { WebsocketMessage, WebsocketService } from '../../core/services/websocket.service';
-
-interface AlertPayload {
-  tipo_alerta: string;
-  prioridad: string;
-  ubicacion: string;
-  url_maps: string;
-  elementos_necesarios: string[];
-  instrucciones: string[];
-}
-
-interface RecentAlert {
-  alert: AlertPayload;
-  receivedAt: string;
-}
+import { AlertPayload } from './components/alert-view/alert-view.component';
+import { RecentAlert } from './components/recent-alerts/recent-alerts.component';
+import { AlertViewComponent } from './components/alert-view/alert-view.component';
+import { RecentAlertsComponent } from './components/recent-alerts/recent-alerts.component';
+import { ConnectionPipComponent } from './components/connection-pip/connection-pip.component';
+import { NormalNoticeComponent } from './components/normal-notice/normal-notice.component';
 
 const LAST_ALERT_STORAGE_KEY = 'rescue-last-alert';
 
 @Component({
   selector: 'app-display',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    AlertViewComponent,
+    RecentAlertsComponent,
+    ConnectionPipComponent,
+    NormalNoticeComponent
+  ],
   templateUrl: './display.component.html',
   styleUrl: './display.component.scss'
 })
@@ -338,6 +336,11 @@ export class DisplayComponent implements OnInit, OnDestroy {
     if (queryIndex !== -1) {
       const query = trimmed.slice(queryIndex + 3);
       return `https://www.google.com/maps?q=${query}&output=embed`;
+    }
+
+    const placeMatch = trimmed.match(/\/maps\/place\/([^/?#]+)/i);
+    if (placeMatch && placeMatch[1]) {
+      return `https://www.google.com/maps?q=${placeMatch[1]}&output=embed`;
     }
 
     return `https://www.google.com/maps?q=${encodeURIComponent(trimmed)}&output=embed`;
