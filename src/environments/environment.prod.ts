@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  websocketUrl: 'wss://tu-servidor/ws'
+  websocketUrl: 'wss://backtv.rescue.com.co/ws'
 };
