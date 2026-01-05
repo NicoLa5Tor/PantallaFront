@@ -2,13 +2,42 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SafeResourceUrl } from '@angular/platform-browser';
 
+export interface AlertLocation {
+  nombre: string;
+  direccion: string;
+  maps: string;
+}
+
+export interface AlertOrigin {
+  tipo: string;
+  nombre: string;
+}
+
+export interface AlertContact {
+  nombre: string;
+  rol: string;
+  telefono: string;
+}
+
+export interface AlertTimestamps {
+  creacion: string;
+  actualizacion: string;
+}
+
 export interface AlertPayload {
-  tipo_alerta: string;
+  id: string;
+  estado: string;
+  nivel_alerta: string;
   prioridad: string;
-  ubicacion: string;
-  url_maps: string;
-  elementos_necesarios: string[];
+  nombre: string;
+  descripcion: string;
+  imagen: string;
+  ubicacion: AlertLocation;
   instrucciones: string[];
+  elementos_necesarios: string[];
+  origen: AlertOrigin;
+  contactos: AlertContact[];
+  timestamps: AlertTimestamps;
 }
 
 @Component({

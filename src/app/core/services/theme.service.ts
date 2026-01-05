@@ -9,14 +9,16 @@ const THEME_STORAGE_KEY = 'rescue-theme';
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private document = inject(DOCUMENT);
-  private themeSubject = new BehaviorSubject<ThemeMode>('light');
+  private themeSubject = new BehaviorSubject<ThemeMode>('dark');
   readonly theme$ = this.themeSubject.asObservable();
 
   constructor() {
     const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
     if (savedTheme === 'light' || savedTheme === 'dark') {
       this.setTheme(savedTheme);
+      return;
     }
+    this.setTheme('dark');
   }
 
   get theme(): ThemeMode {

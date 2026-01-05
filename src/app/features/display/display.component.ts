@@ -6,7 +6,13 @@ import { map } from 'rxjs';
 
 import { ThemeService } from '../../core/services/theme.service';
 import { WebsocketMessage, WebsocketService } from '../../core/services/websocket.service';
-import { AlertPayload } from './components/alert-view/alert-view.component';
+import {
+  AlertContact,
+  AlertPayload,
+  AlertLocation,
+  AlertOrigin,
+  AlertTimestamps
+} from './components/alert-view/alert-view.component';
 import { RecentAlert } from './components/recent-alerts/recent-alerts.component';
 import { AlertViewComponent } from './components/alert-view/alert-view.component';
 import { RecentAlertsComponent } from './components/recent-alerts/recent-alerts.component';
@@ -40,6 +46,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
   mapUrl: SafeResourceUrl | null = null;
   recentCollapsed = false;
   normalNotice = false;
+  showHeader = true;
   private normalTimer: ReturnType<typeof setTimeout> | null = null;
   pipVisible = true;
   pipSize: 'sm' | 'md' = 'sm';
@@ -76,7 +83,8 @@ export class DisplayComponent implements OnInit, OnDestroy {
       if (alert) {
         this.activeAlert = alert;
         this.lastAlert = alert;
-        this.mapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(alert.url_maps);
+        this.mapUrl = this.buildMapUrl(alert);
+        this.showHeader = false;
       }
     }
 
@@ -90,6 +98,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
         this.mapUrl = null;
         this.recentCollapsed = false;
         this.recentAlerts = [];
+        this.showHeader = true;
         localStorage.removeItem(LAST_ALERT_STORAGE_KEY);
         this.showNormalNotice();
         return;
@@ -100,9 +109,10 @@ export class DisplayComponent implements OnInit, OnDestroy {
         this.lastAlert = alert;
         const receivedAt = message.timestamp ?? new Date().toISOString();
         this.recentAlerts = [{ alert, receivedAt }, ...this.recentAlerts].slice(0, 20);
-        this.mapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(alert.url_maps);
+        this.mapUrl = this.buildMapUrl(alert);
         localStorage.setItem(LAST_ALERT_STORAGE_KEY, JSON.stringify(alert));
         this.recentCollapsed = true;
+        this.showHeader = false;
         this.ensurePipVisible();
       }
     });
@@ -128,9 +138,14 @@ export class DisplayComponent implements OnInit, OnDestroy {
     this.router.navigate(['/']);
   }
 
+  toggleHeader(): void {
+    this.showHeader = !this.showHeader;
+  }
+
   dismissAlert(): void {
     this.activeAlert = null;
     this.mapUrl = null;
+    this.showHeader = true;
   }
 
   restoreAlert(): void {
@@ -138,13 +153,15 @@ export class DisplayComponent implements OnInit, OnDestroy {
       return;
     }
     this.activeAlert = this.lastAlert;
-    this.mapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.lastAlert.url_maps);
+    this.mapUrl = this.buildMapUrl(this.lastAlert);
+    this.showHeader = false;
   }
 
   showAlert(alert: AlertPayload): void {
     this.activeAlert = alert;
     this.lastAlert = alert;
-    this.mapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(alert.url_maps);
+    this.mapUrl = this.buildMapUrl(alert);
+    this.showHeader = false;
   }
 
   toggleRecentCollapsed(): void {
@@ -242,26 +259,84 @@ export class DisplayComponent implements OnInit, OnDestroy {
     if (!parsed || typeof parsed !== 'object') {
       return null;
     }
-    const data = parsed as Record<string, unknown>;
-    const tipo = this.pickString(data, ['tipo_alerta', 'tipo_alarma']);
+    const data = this.unwrapAlert(parsed as Record<string, unknown>);
+    const nombre = this.pickString(data, ['nombre', 'nombre_alerta', 'tipo_alerta', 'tipo_alarma', 'data.tipo_alarma_detalle.nombre']);
     const prioridad = this.pickString(data, ['prioridad']);
-    const ubicacion = this.pickString(data, ['ubicacion', 'ubicacion.direccion']);
-    const urlMaps = this.pickString(data, ['url', 'ubicacion.url_maps', 'url_maps']);
-    const elementos = Array.isArray(data['elementos_necesarios'])
-      ? data['elementos_necesarios'].filter((item) => typeof item === 'string')
-      : [];
-    const instrucciones = Array.isArray(data['instrucciones'])
-      ? data['instrucciones'].filter((item) => typeof item === 'string')
-      : [];
+    const nivelAlerta = this.pickString(data, ['nivel_alerta', 'tipo_alerta', 'data.tipo_alarma_detalle.tipo_alerta']);
+    const estado = this.pickString(data, ['estado']);
+    const descripcion = this.pickString(data, ['descripcion']);
+    const imagen = this.pickString(data, ['imagen', 'image_alert', 'data.image_alert', 'data.tipo_alarma_detalle.imagen_base64']);
+    const id = this.pickString(data, ['id', '_id']);
 
-    if (tipo && prioridad && ubicacion && urlMaps) {
+    const ubicacionRaw = this.getPathValue(data, 'ubicacion');
+    const ubicacionData = this.asRecord(ubicacionRaw);
+    const ubicacionNombre = ubicacionData ? this.pickString(ubicacionData, ['nombre']) : '';
+    let ubicacionDireccion = '';
+    if (typeof ubicacionRaw === 'string') {
+      ubicacionDireccion = ubicacionRaw;
+    } else if (ubicacionData) {
+      ubicacionDireccion = this.pickString(ubicacionData, ['direccion']);
+    }
+    if (!ubicacionDireccion) {
+      ubicacionDireccion = this.pickString(data, ['ubicacion', 'sede']);
+    }
+    let ubicacionMaps = '';
+    if (ubicacionData) {
+      ubicacionMaps = this.pickString(ubicacionData, ['maps', 'url_maps', 'url']);
+    }
+    if (!ubicacionMaps) {
+      ubicacionMaps = this.pickString(data, ['url_maps', 'url', 'data.ubicacion.url_maps', 'data.ubicacion.maps']);
+    }
+    const ubicacion: AlertLocation = {
+      nombre: ubicacionNombre,
+      direccion: ubicacionDireccion,
+      maps: ubicacionMaps
+    };
+
+    const origenData = this.asRecord(this.getPathValue(data, 'origen'));
+    const activacionData = this.asRecord(this.getPathValue(data, 'activacion_alerta'));
+    const origen: AlertOrigin = {
+      tipo: origenData
+        ? this.pickString(origenData, ['tipo'])
+        : activacionData
+          ? this.pickString(activacionData, ['tipo_activacion'])
+          : this.pickString(data, ['data.creador_tipo', 'data.origen']),
+      nombre: origenData
+        ? this.pickString(origenData, ['nombre'])
+        : activacionData
+          ? this.pickString(activacionData, ['nombre'])
+          : this.pickString(data, ['empresa_nombre', 'data.creador_id'])
+    };
+
+    const contactos = this.parseContacts(data['contactos'] ?? this.getPathValue(data, 'numeros_telefonicos'));
+    const elementos = this.pickStringArray(data, ['elementos_necesarios', 'data.elementos_necesarios', 'data.tipo_alarma_detalle.implementos_necesarios']);
+    const instrucciones = this.pickStringArray(data, ['instrucciones', 'data.instrucciones', 'data.tipo_alarma_detalle.recomendaciones']);
+
+    const timestampsData = this.asRecord(this.getPathValue(data, 'timestamps'));
+    const timestamps: AlertTimestamps = {
+      creacion: timestampsData
+        ? this.pickString(timestampsData, ['creacion'])
+        : this.pickString(data, ['fecha_creacion', 'data.timestamp_creacion']),
+      actualizacion: timestampsData
+        ? this.pickString(timestampsData, ['actualizacion'])
+        : this.pickString(data, ['fecha_actualizacion'])
+    };
+
+    if (nombre && prioridad && (ubicacion.direccion || ubicacion.nombre)) {
       return {
-        tipo_alerta: tipo,
+        id,
+        estado,
+        nivel_alerta: nivelAlerta,
         prioridad,
+        nombre,
+        descripcion,
+        imagen,
         ubicacion,
-        url_maps: this.toEmbedUrl(urlMaps),
-        elementos_necesarios: elementos as string[],
-        instrucciones: instrucciones as string[]
+        instrucciones,
+        elementos_necesarios: elementos,
+        origen,
+        contactos,
+        timestamps
       };
     }
     return null;
@@ -272,8 +347,20 @@ export class DisplayComponent implements OnInit, OnDestroy {
     if (!parsed || typeof parsed !== 'object') {
       return false;
     }
-    const data = parsed as Record<string, unknown>;
-    const tipo = this.pickString(data, ['tipo_alarma', 'tipo_alerta']);
+    const data = this.unwrapAlert(parsed as Record<string, unknown>);
+    const estado = this.pickString(data, ['estado']);
+    if (estado) {
+      return estado.toUpperCase() !== 'ACTIVA';
+    }
+    const activo = this.getPathValue(data, 'activo');
+    if (typeof activo === 'boolean') {
+      return !activo;
+    }
+    const fechaDesactivacion = this.pickString(data, ['fecha_desactivacion']);
+    if (fechaDesactivacion) {
+      return true;
+    }
+    const tipo = this.pickString(data, ['tipo_alarma', 'tipo_alerta', 'nivel_alerta', 'estado']);
     return tipo.toUpperCase() === 'NORMAL';
   }
 
@@ -299,6 +386,49 @@ export class DisplayComponent implements OnInit, OnDestroy {
     return current;
   }
 
+  private asRecord(value: unknown): Record<string, unknown> | null {
+    if (!value || typeof value !== 'object') {
+      return null;
+    }
+    return value as Record<string, unknown>;
+  }
+
+  private pickStringArray(data: Record<string, unknown>, paths: string[]): string[] {
+    for (const path of paths) {
+      const value = this.getPathValue(data, path);
+      if (Array.isArray(value)) {
+        return value.filter((item) => typeof item === 'string') as string[];
+      }
+    }
+    return [];
+  }
+
+  private parseContacts(value: unknown): AlertContact[] {
+    if (!Array.isArray(value)) {
+      return [];
+    }
+    return value
+      .map((item) => {
+        if (typeof item === 'string') {
+          return {
+            nombre: '',
+            rol: '',
+            telefono: item
+          };
+        }
+        if (!item || typeof item !== 'object') {
+          return null;
+        }
+        const record = item as Record<string, unknown>;
+        return {
+          nombre: this.pickString(record, ['nombre']),
+          rol: this.pickString(record, ['rol']),
+          telefono: this.pickString(record, ['telefono'])
+        };
+      })
+      .filter((item): item is AlertContact => item !== null);
+  }
+
   private parsePayload(payload: unknown): unknown {
     if (typeof payload === 'string') {
       try {
@@ -319,6 +449,13 @@ export class DisplayComponent implements OnInit, OnDestroy {
       return data['payload'];
     }
     return parsed;
+  }
+
+  private unwrapAlert(data: Record<string, unknown>): Record<string, unknown> {
+    if ('alert' in data && data['alert'] && typeof data['alert'] === 'object') {
+      return data['alert'] as Record<string, unknown>;
+    }
+    return data;
   }
 
   private toEmbedUrl(url: string): string {
@@ -344,5 +481,14 @@ export class DisplayComponent implements OnInit, OnDestroy {
     }
 
     return `https://www.google.com/maps?q=${encodeURIComponent(trimmed)}&output=embed`;
+  }
+
+  private buildMapUrl(alert: AlertPayload): SafeResourceUrl | null {
+    if (!alert.ubicacion.maps) {
+      return null;
+    }
+    return this.sanitizer.bypassSecurityTrustResourceUrl(
+      this.toEmbedUrl(alert.ubicacion.maps)
+    );
   }
 }

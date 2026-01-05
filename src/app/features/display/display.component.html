@@ -1,30 +1,51 @@
 <div class="min-h-screen text-slate-900 dark:text-slate-100">
-  <div class="relative mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-5 py-10 sm:px-8 sm:py-12">
-    <header class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-      <div>
-        <p class="text-xs uppercase tracking-[0.3em] text-slate-400 dark:text-slate-500">RESCUE</p>
-        <h1 class="text-3xl font-semibold tracking-tight md:text-4xl">Canal de alertas</h1>
-        <p class="mt-2 text-base text-slate-500 dark:text-slate-400">
-          Escuchando datos en tiempo real.
-        </p>
-      </div>
-      <div class="flex flex-col gap-3 sm:flex-row">
-        <button
-          type="button"
-          class="rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-slate-200 transition hover:bg-white dark:bg-slate-900/80 dark:text-slate-200 dark:ring-slate-700"
-          (click)="themeService.toggle()"
-        >
-          Tema: {{ themeService.theme === 'light' ? 'Claro' : 'Oscuro' }}
-        </button>
-        <button
-          type="button"
-          class="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition hover:-translate-y-0.5 dark:bg-white dark:text-slate-900"
-          (click)="goBack()"
-        >
-          Editar
-        </button>
-      </div>
-    </header>
+  <div class="relative mx-auto flex min-h-screen w-full max-w-none flex-col gap-6 px-5 py-10 sm:px-8 sm:py-12">
+    @if (!activeAlert || showHeader) {
+      <header class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p class="text-xs uppercase tracking-[0.3em] text-slate-400 dark:text-slate-500">RESCUE</p>
+          <h1 class="text-3xl font-semibold tracking-tight md:text-4xl">Canal de alertas</h1>
+          <p class="mt-2 text-base text-slate-500 dark:text-slate-400">
+            Escuchando datos en tiempo real.
+          </p>
+        </div>
+        <div class="flex flex-col gap-3 sm:flex-row">
+          <button
+            type="button"
+            class="rounded-full bg-white/90 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm ring-1 ring-slate-200 transition hover:bg-white dark:bg-slate-900/80 dark:text-slate-200 dark:ring-slate-700"
+            (click)="themeService.toggle()"
+          >
+            Tema: {{ themeService.theme === 'light' ? 'Claro' : 'Oscuro' }}
+          </button>
+          <button
+            type="button"
+            class="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition hover:-translate-y-0.5 dark:bg-white dark:text-slate-900"
+            (click)="goBack()"
+          >
+            Editar
+          </button>
+          @if (activeAlert) {
+            <button
+              type="button"
+              class="rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200 transition hover:bg-white dark:bg-slate-800 dark:text-slate-100 dark:ring-slate-700"
+              (click)="toggleHeader()"
+            >
+              Ocultar encabezado
+            </button>
+          }
+        </div>
+      </header>
+    }
+
+    @if (activeAlert && !showHeader) {
+      <button
+        type="button"
+        class="fixed left-1/2 top-6 z-50 -translate-x-1/2 rounded-full bg-white/80 px-5 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-slate-700 shadow-lg shadow-slate-900/10 ring-1 ring-white/70 backdrop-blur transition hover:-translate-y-0.5 hover:bg-white dark:bg-slate-900/70 dark:text-slate-100 dark:ring-slate-700"
+        (click)="toggleHeader()"
+      >
+        Mostrar encabezado
+      </button>
+    }
 
     <app-connection-pip
       [active]="!!activeAlert"
