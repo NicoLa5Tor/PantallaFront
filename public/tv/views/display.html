@@ -1,0 +1,104 @@
+<section id="displayView" class="view hidden">
+  <header class="header">
+    <div>
+      <p class="kicker">RESCUE</p>
+      <h1 class="title">Canal de alertas</h1>
+      <p class="sub">Escuchando datos en tiempo real.</p>
+    </div>
+    <div class="header-actions">
+      <button id="editBtn" type="button" class="pill">Editar</button>
+    </div>
+  </header>
+
+  <div class="display-body">
+    <section id="listeningPanel" class="card listening">
+      <div class="listening-row">
+        <div class="spinner" aria-hidden="true"></div>
+        <div>
+          <p class="listening-title">Escuchando</p>
+          <p class="listening-sub">Estado: <span id="statusText">idle</span></p>
+        </div>
+      </div>
+      <div class="listening-route">
+        <p class="label">Ruta</p>
+        <p id="topicDisplay" class="topic-value">empresas/{empresa}/{sede}/PANTALLA</p>
+      </div>
+    </section>
+
+    <section id="alertPanel" class="alert-panel card hidden">
+      <div class="alert-head">
+        <div>
+          <p class="kicker alert-kicker">Alerta activa</p>
+          <h2 class="alert-title">Respuesta inmediata</h2>
+        </div>
+      </div>
+
+      <div class="alert-grid">
+        <div class="alert-column">
+          <div class="block block-rose">
+            <div class="block-head">
+              <div>
+                <p class="block-label">Tipo</p>
+                <p id="alertTypeName" class="block-title">--</p>
+                <div class="badge-row">
+                  <span id="alertLevel" class="badge hidden"></span>
+                  <span id="alertPriority" class="badge-plain">Prioridad --</span>
+                </div>
+              </div>
+              <img id="alertImage" class="alert-image hidden" alt="Imagen de alerta">
+            </div>
+            <p id="alertDescription" class="block-note hidden"></p>
+          </div>
+
+          <div class="block">
+            <p class="block-label">Ubicacion</p>
+            <p id="locationAddress" class="block-title">--</p>
+            <p id="locationName" class="block-sub hidden"></p>
+            <a id="locationLink" class="block-link hidden" target="_blank" rel="noopener">Abrir mapa</a>
+          </div>
+
+          <div class="block">
+            <p class="block-label">Origen</p>
+            <p id="originName" class="block-title">--</p>
+            <p id="originType" class="block-sub hidden"></p>
+          </div>
+
+          <div class="block">
+            <p class="block-label">Checklist</p>
+            <div id="checklist" class="chip-row"></div>
+          </div>
+
+          <div class="block">
+            <p class="block-label">Instrucciones</p>
+            <div id="instructions" class="steps"></div>
+          </div>
+        </div>
+
+        <div class="alert-column">
+          <div class="block">
+            <p class="block-label">Mapa</p>
+            <div id="mapContainer" class="map-shell empty">Sin ubicacion.</div>
+          </div>
+
+          <div class="block">
+            <p class="block-label">Contactos</p>
+            <div id="contacts" class="contacts"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span>Rescue TV - Vanilla fallback</span>
+      <span id="clock"></span>
+    </footer>
+  </div>
+
+  <div id="normalNotice" class="normal-notice hidden">
+    <div class="normal-card">
+      <p class="kicker">RESCUE</p>
+      <h2>Alerta desactivada</h2>
+      <p id="normalDetail">Volviendo al canal de alertas en 5 segundos.</p>
+    </div>
+  </div>
+</section>

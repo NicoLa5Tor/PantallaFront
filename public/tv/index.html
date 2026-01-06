@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <title>Rescue TV</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./css/main.css">
+  </head>
+  <body>
+    <div class="page">
+      <div class="container">
+        <section id="setupView" class="view setup-view">
+          <header class="header">
+            <div>
+              <p class="kicker">RESCUE</p>
+              <h1 class="title">Configuracion de pantalla</h1>
+              <p class="sub">Define empresa y sede para crear la ruta dinamica.</p>
+            </div>
+            <button id="themeToggle" type="button" class="pill">Tema: <span id="themeLabel">Claro</span></button>
+          </header>
+
+          <section class="card">
+            <div class="row">
+              <label class="field">
+                Empresa
+                <input id="empresaInput" type="text" placeholder="pruebanueva" class="input">
+              </label>
+              <label class="field">
+                Sede
+                <input id="sedeInput" type="text" placeholder="Principal" class="input">
+              </label>
+            </div>
+
+            <div class="preview">
+              <p class="preview-label">Ruta preview</p>
+              <p id="topicText" class="preview-value">empresas/{empresa}/{sede}/PANTALLA</p>
+            </div>
+
+            <p id="errorText" class="error"></p>
+
+            <div class="row actions-row">
+              <p class="helper">Segmentos fijos: empresas / PANTALLA</p>
+              <button id="connectBtn" type="button" class="btn-primary">Continuar</button>
+            </div>
+          </section>
+        </section>
+
+        <div id="displayContainer"></div>
+      </div>
+    </div>
+
+    <div id="errorOverlay" class="error-overlay"></div>
+    <script src="./js/core.js"></script>
+    <script src="./js/storage.js"></script>
+    <script src="./js/theme.js"></script>
+    <script src="./js/ws.js"></script>
+    <script src="./js/views/setup.js"></script>
+    <script src="./js/views/display.js"></script>
+    <script src="./js/app.js"></script>
+  </body>
+</html>
