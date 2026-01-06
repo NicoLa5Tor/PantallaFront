@@ -1,0 +1,8 @@
+# Objetivo mínimo que evita downleveling de const/let.
+# Si la TV es más antigua que esto, Angular 19 no podrá compilar a ES5.
+Chrome >= 61
+Safari >= 11
+iOS >= 11
+Android >= 7
+Firefox >= 60
+Edge >= 18
