@@ -17,7 +17,7 @@ body {
 
 .page {
   min-height: 100vh;
-  padding: 24px;
+  padding: clamp(1rem, 2.2vw, 1.6rem);
 }
 
 .container {
@@ -25,7 +25,7 @@ body {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: clamp(1rem, 2vw, 1.6rem);
 }
 
 .setup-view {
@@ -37,7 +37,7 @@ body {
 .view {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: clamp(1rem, 2vw, 1.6rem);
 }
 
 .hidden {
@@ -48,7 +48,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  gap: clamp(0.8rem, 1.6vw, 1.2rem);
   flex-wrap: wrap;
 }
 
@@ -58,7 +58,7 @@ body {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: clamp(1rem, 2vw, 1.6rem);
 }
 
 #displayView > .header {
@@ -76,12 +76,12 @@ body {
 }
 
 .title {
-  margin: 6px 0 0 0;
+  margin: clamp(0.25rem, 0.6vw, 0.4rem) 0 0 0;
   font-size: 36px;
 }
 
 .sub {
-  margin: 6px 0 0 0;
+  margin: clamp(0.25rem, 0.6vw, 0.4rem) 0 0 0;
   color: #64748b;
   font-size: 15px;
 }
@@ -93,7 +93,7 @@ body {
 .pill {
   border: none;
   border-radius: 999px;
-  padding: 12px 20px;
+  padding: clamp(0.6rem, 1.2vw, 0.9rem) clamp(1rem, 1.8vw, 1.4rem);
   font-weight: 700;
   background: #0f172a;
   color: #fff;
@@ -118,7 +118,7 @@ body {
 .card {
   background: #ffffffcc;
   border-radius: 32px;
-  padding: 26px;
+  padding: clamp(1.2rem, 2.4vw, 1.8rem);
   box-shadow: 0 25px 70px rgba(15, 23, 42, 0.12);
   border: 1px solid #e2e8f0;
   backdrop-filter: blur(18px);
@@ -131,7 +131,7 @@ body {
 
 .row {
   display: flex;
-  gap: 16px;
+  gap: clamp(0.8rem, 1.6vw, 1.2rem);
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
@@ -140,7 +140,7 @@ body {
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: clamp(0.3rem, 0.8vw, 0.45rem);
   flex: 1 1 220px;
   font-size: 15px;
   font-weight: 600;
@@ -149,7 +149,7 @@ body {
 .input {
   border: 1px solid #e2e8f0;
   border-radius: 18px;
-  padding: 12px 16px;
+  padding: clamp(0.6rem, 1.2vw, 0.85rem) clamp(0.8rem, 1.4vw, 1rem);
   font-size: 17px;
   background: #ffffffb3;
   color: #0f172a;
@@ -162,8 +162,8 @@ body {
 }
 
 .preview {
-  margin-top: 16px;
-  padding: 18px 20px;
+  margin-top: clamp(0.8rem, 1.6vw, 1.2rem);
+  padding: clamp(0.9rem, 1.6vw, 1.2rem) clamp(1rem, 1.8vw, 1.4rem);
   border-radius: 20px;
   border: 1px solid #e2e8f0;
   background: #f8fafc;
@@ -183,21 +183,21 @@ body {
 }
 
 .preview-value {
-  margin: 8px 0 0 0;
+  margin: clamp(0.4rem, 0.8vw, 0.6rem) 0 0 0;
   font-weight: 700;
   font-size: 20px;
   word-break: break-all;
 }
 
 .topic-value {
-  margin: 8px 0 0 0;
+  margin: clamp(0.4rem, 0.8vw, 0.6rem) 0 0 0;
   font-weight: 700;
   font-size: 16px;
   word-break: break-all;
 }
 
 .actions-row {
-  margin-top: 16px;
+  margin-top: clamp(0.8rem, 1.6vw, 1.2rem);
   align-items: center;
   justify-content: space-between;
 }
@@ -211,7 +211,7 @@ body {
 .btn-primary {
   border: none;
   border-radius: 999px;
-  padding: 13px 24px;
+  padding: clamp(0.65rem, 1.2vw, 0.95rem) clamp(1.1rem, 2vw, 1.6rem);
   font-weight: 700;
   background: #0f172a;
   color: #fff;
@@ -225,7 +225,7 @@ body {
 }
 
 .error {
-  margin: 12px 0 0 0;
+  margin: clamp(0.6rem, 1.2vw, 0.9rem) 0 0 0;
   color: #dc2626;
   font-weight: 600;
 }
@@ -233,25 +233,25 @@ body {
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 16px;
+  gap: clamp(0.8rem, 1.6vw, 1.2rem);
 }
 
 .alert-panel {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: clamp(1rem, 2vw, 1.6rem);
 }
 
 .listening {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: clamp(0.8rem, 1.6vw, 1.2rem);
 }
 
 .listening-row {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: clamp(0.7rem, 1.4vw, 1rem);
 }
 
 .spinner {
@@ -275,7 +275,7 @@ body {
 }
 
 .listening-sub {
-  margin: 4px 0 0 0;
+  margin: clamp(0.2rem, 0.6vw, 0.4rem) 0 0 0;
   font-size: 13px;
   color: #64748b;
 }
@@ -288,7 +288,7 @@ body {
   border-radius: 20px;
   border: 1px solid #e2e8f0;
   background: #f8fafc;
-  padding: 16px;
+  padding: clamp(0.8rem, 1.6vw, 1.2rem);
 }
 
 .theme-dark .listening-route {
@@ -307,20 +307,20 @@ body {
 }
 
 .alert-title {
-  margin: 8px 0 0 0;
+  margin: clamp(0.4rem, 0.8vw, 0.6rem) 0 0 0;
   font-size: 28px;
 }
 
 .alert-grid {
   display: grid;
-  gap: 16px;
-  grid-template-columns: 1fr;
+  gap: clamp(1rem, 1.8vw, 1.6rem);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
   align-items: start;
 }
 
 .alert-column {
   display: grid;
-  gap: 16px;
+  gap: clamp(0.9rem, 1.4vw, 1.4rem);
   align-content: start;
   grid-auto-rows: min-content;
 }
@@ -328,7 +328,7 @@ body {
 .block {
   background: #f8fafc;
   border-radius: 24px;
-  padding: 18px;
+  padding: clamp(0.9rem, 1.6vw, 1.3rem);
   border: 1px solid #e2e8f0;
 }
 
@@ -356,20 +356,20 @@ body {
 }
 
 .block-title {
-  margin: 10px 0 0 0;
+  margin: clamp(0.5rem, 1vw, 0.7rem) 0 0 0;
   font-size: 22px;
   font-weight: 700;
 }
 
 .block-sub {
-  margin: 6px 0 0 0;
+  margin: clamp(0.3rem, 0.7vw, 0.45rem) 0 0 0;
   font-size: 14px;
   color: #64748b;
 }
 
 .block-link {
   display: inline-flex;
-  margin-top: 10px;
+  margin-top: clamp(0.5rem, 1vw, 0.7rem);
   font-size: 13px;
   font-weight: 700;
   color: #334155;
@@ -382,22 +382,22 @@ body {
 }
 
 .block-note {
-  margin: 12px 0 0 0;
+  margin: clamp(0.6rem, 1.1vw, 0.9rem) 0 0 0;
   font-size: 14px;
   color: #e11d48;
 }
 
 .badge-row {
-  margin-top: 10px;
+  margin-top: clamp(0.5rem, 1vw, 0.7rem);
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: clamp(0.4rem, 0.8vw, 0.6rem);
   font-size: 12px;
 }
 
 .badge {
   border-radius: 999px;
-  padding: 4px 10px;
+  padding: clamp(0.2rem, 0.6vw, 0.4rem) clamp(0.5rem, 0.9vw, 0.7rem);
   background: #ffe4e6;
   color: #e11d48;
   font-weight: 700;
@@ -423,7 +423,7 @@ body {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: clamp(0.6rem, 1.2vw, 0.9rem);
 }
 
 .alert-image {
@@ -435,15 +435,15 @@ body {
 }
 
 .chip-row {
-  margin-top: 12px;
+  margin-top: clamp(0.6rem, 1.2vw, 0.9rem);
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: clamp(0.4rem, 0.8vw, 0.6rem);
 }
 
 .chip {
   border-radius: 999px;
-  padding: 6px 10px;
+  padding: clamp(0.3rem, 0.7vw, 0.45rem) clamp(0.5rem, 0.9vw, 0.7rem);
   background: #ffffff;
   font-size: 12px;
   font-weight: 600;
@@ -457,7 +457,7 @@ body {
 }
 
 .map-shell {
-  margin-top: 12px;
+  margin-top: clamp(0.6rem, 1.2vw, 0.9rem);
   border-radius: 18px;
   overflow: hidden;
   border: 1px solid #e2e8f0;
@@ -476,16 +476,16 @@ body {
 }
 
 .steps {
-  margin-top: 12px;
+  margin-top: clamp(0.6rem, 1.2vw, 0.9rem);
   display: grid;
-  gap: 10px;
+  gap: clamp(0.5rem, 1vw, 0.75rem);
 }
 
 .step {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  padding: 10px 12px;
+  gap: clamp(0.5rem, 1vw, 0.75rem);
+  padding: clamp(0.5rem, 1vw, 0.75rem) clamp(0.6rem, 1.1vw, 0.85rem);
   border-radius: 16px;
   background: #ffffff;
   font-size: 14px;
@@ -517,13 +517,13 @@ body {
 }
 
 .contacts {
-  margin-top: 12px;
+  margin-top: clamp(0.6rem, 1.2vw, 0.9rem);
   display: grid;
-  gap: 10px;
+  gap: clamp(0.5rem, 1vw, 0.75rem);
 }
 
 .contact-card {
-  padding: 10px 12px;
+  padding: clamp(0.5rem, 1vw, 0.75rem) clamp(0.6rem, 1.1vw, 0.85rem);
   border-radius: 16px;
   background: #ffffff;
   box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
@@ -548,7 +548,7 @@ body {
 }
 
 .contact-phone {
-  margin-top: 6px;
+  margin-top: clamp(0.3rem, 0.7vw, 0.45rem);
   font-size: 13px;
   font-weight: 700;
   color: #475569;
@@ -563,7 +563,7 @@ body {
 }
 
 .card h2 {
-  margin: 0 0 12px 0;
+  margin: 0 0 clamp(0.6rem, 1.1vw, 0.9rem) 0;
   font-size: 18px;
 }
 
@@ -602,7 +602,7 @@ body {
   color: #fff;
   font-family: monospace;
   font-size: 14px;
-  padding: 24px;
+  padding: clamp(1rem, 2vw, 1.6rem);
   display: none;
   white-space: pre-wrap;
   z-index: 99999;
@@ -626,7 +626,7 @@ body {
 .normal-card {
   background: rgba(255, 255, 255, 0.9);
   border-radius: 28px;
-  padding: 24px 32px;
+  padding: clamp(1rem, 2vw, 1.6rem) clamp(1.2rem, 2.4vw, 2rem);
   text-align: center;
   box-shadow: 0 30px 80px rgba(15, 23, 42, 0.25);
   border: 1px solid #e2e8f0;
@@ -638,12 +638,12 @@ body {
 }
 
 .normal-card h2 {
-  margin: 10px 0 0 0;
+  margin: clamp(0.5rem, 1vw, 0.7rem) 0 0 0;
   font-size: 20px;
 }
 
 .normal-card p {
-  margin: 8px 0 0 0;
+  margin: clamp(0.4rem, 0.9vw, 0.6rem) 0 0 0;
   font-size: 13px;
   color: #64748b;
 }
@@ -666,14 +666,13 @@ body {
   .actions-row {
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: clamp(0.6rem, 1.2vw, 0.9rem);
   }
 }
 
 @media (min-width: 1024px) {
   .alert-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-    gap: 24px;
+    gap: clamp(1.2rem, 2vw, 1.8rem);
   }
 
   .map-shell iframe {

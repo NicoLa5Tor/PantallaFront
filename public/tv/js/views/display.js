@@ -145,6 +145,26 @@ window.TvApp = window.TvApp || {};
     return tipo.toUpperCase() === 'NORMAL';
   }
 
+  function extractLatLngFromMaps(url) {
+    if (!url) {
+      return null;
+    }
+    var text = String(url);
+    var queryMatch = text.match(/[?&]q=([-0-9.]+),([-0-9.]+)/);
+    if (queryMatch) {
+      return { lat: parseFloat(queryMatch[1]), lng: parseFloat(queryMatch[2]) };
+    }
+    var placeMatch = text.match(/\/maps\/place\/([-0-9.]+),([-0-9.]+)/);
+    if (placeMatch) {
+      return { lat: parseFloat(placeMatch[1]), lng: parseFloat(placeMatch[2]) };
+    }
+    return null;
+  }
+
+  function buildOpenMapsLink(lat, lng) {
+    return 'https://www.openstreetmap.org/?mlat=' + lat + '&mlon=' + lng + '&zoom=15';
+  }
+
   function extractAlert(payload) {
     var parsed = unwrapPayload(parsePayload(payload));
     if (!parsed || typeof parsed !== 'object') {
@@ -177,11 +197,22 @@ window.TvApp = window.TvApp || {};
       ubicacionDireccion = pickString(data, ['ubicacion', 'sede']);
     }
     var ubicacionMaps = '';
+    var ubicacionOpenMaps = '';
     if (ubicacionData) {
       ubicacionMaps = pickString(ubicacionData, ['maps', 'url_maps', 'url']);
+      ubicacionOpenMaps = pickString(ubicacionData, ['open_maps', 'openMaps']);
     }
     if (!ubicacionMaps) {
       ubicacionMaps = pickString(data, ['url_maps', 'url', 'data.ubicacion.url_maps', 'data.ubicacion.maps']);
+    }
+    if (!ubicacionOpenMaps) {
+      ubicacionOpenMaps = pickString(data, ['open_maps', 'data.ubicacion.open_maps']);
+    }
+    if (!ubicacionOpenMaps && ubicacionMaps) {
+      var coords = extractLatLngFromMaps(ubicacionMaps);
+      if (coords && !isNaN(coords.lat) && !isNaN(coords.lng)) {
+        ubicacionOpenMaps = buildOpenMapsLink(coords.lat, coords.lng);
+      }
     }
 
     var origenData = asRecord(getPathValue(data, 'origen'));
@@ -220,7 +251,8 @@ window.TvApp = window.TvApp || {};
         ubicacion: {
           nombre: ubicacionNombre,
           direccion: ubicacionDireccion,
-          maps: ubicacionMaps
+          maps: ubicacionMaps,
+          open_maps: ubicacionOpenMaps
         },
         origen: {
           tipo: origenTipo,
@@ -239,6 +271,10 @@ window.TvApp = window.TvApp || {};
     if (!trimmed) {
       return '';
     }
+    var converted = convertGoogleMapsEmbed(trimmed);
+    if (converted) {
+      return converted;
+    }
     if (trimmed.indexOf('output=embed') !== -1 || trimmed.indexOf('/maps/embed') !== -1) {
       return trimmed;
     }
@@ -253,12 +289,123 @@ window.TvApp = window.TvApp || {};
     return 'https://www.google.com/maps?q=' + encodeURIComponent(trimmed) + '&output=embed';
   }
 
+  function convertGoogleMapsEmbed(url) {
+    try {
+      var raw = String(url);
+      var queryMatch = raw.match(/[?&]q=([^&]+)/);
+      if (!queryMatch || !queryMatch[1]) {
+        return null;
+      }
+      var decoded = decodeURIComponent(queryMatch[1]);
+      var parts = decoded.split(',');
+      if (parts.length < 2) {
+        return null;
+      }
+      var lat = parts[0].trim();
+      var lng = parts[1].trim();
+      if (!lat || !lng) {
+        return null;
+      }
+      return 'https://www.google.com/maps/embed?pb=' +
+        '!1m14!1m12!1m3!1d0' +
+        '!2d' + lng +
+        '!3d' + lat +
+        '!2m3!1f0!2f0!3f0';
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function buildOsmEmbedFromUrl(url) {
+    if (!url) {
+      return '';
+    }
+    var text = String(url);
+    var latMatch = text.match(/[?&]mlat=([-0-9.]+)/);
+    var lngMatch = text.match(/[?&]mlon=([-0-9.]+)/);
+    if (!latMatch || !lngMatch) {
+      return '';
+    }
+    var lat = parseFloat(latMatch[1]);
+    var lng = parseFloat(lngMatch[1]);
+    if (isNaN(lat) || isNaN(lng)) {
+      return '';
+    }
+    var delta = 0.001;
+    var left = lng - delta;
+    var right = lng + delta;
+    var top = lat + delta;
+    var bottom = lat - delta;
+    return 'https://www.openstreetmap.org/export/embed.html?bbox=' +
+      left + '%2C' + bottom + '%2C' + right + '%2C' + top +
+      '&layer=mapnik&marker=' + lat + '%2C' + lng;
+  }
+
+  function buildOsmEmbedFromLatLng(lat, lng) {
+    var delta = 0.001;
+    var left = lng - delta;
+    var right = lng + delta;
+    var top = lat + delta;
+    var bottom = lat - delta;
+    return 'https://www.openstreetmap.org/export/embed.html?bbox=' +
+      left + '%2C' + bottom + '%2C' + right + '%2C' + top +
+      '&layer=mapnik&marker=' + lat + '%2C' + lng;
+  }
+
+  function extractLatLngFromQuery(url) {
+    if (!url) {
+      return null;
+    }
+    var match = String(url).match(/[?&]q=([-0-9.]+),([-0-9.]+)/);
+    if (!match) {
+      return null;
+    }
+    var lat = parseFloat(match[1]);
+    var lng = parseFloat(match[2]);
+    if (isNaN(lat) || isNaN(lng)) {
+      return null;
+    }
+    return { lat: lat, lng: lng };
+  }
+
+  function extractLatLngFromGooglePlace(url) {
+    if (!url) {
+      return null;
+    }
+    var match = String(url).match(/\/maps\/place\/([-0-9.]+),([-0-9.]+)/);
+    if (!match) {
+      return null;
+    }
+    var lat = parseFloat(match[1]);
+    var lng = parseFloat(match[2]);
+    if (isNaN(lat) || isNaN(lng)) {
+      return null;
+    }
+    return { lat: lat, lng: lng };
+  }
+
   function buildMapUrls(alert) {
-    if (!alert || !alert.ubicacion || !alert.ubicacion.maps) {
+    if (!alert || !alert.ubicacion || (!alert.ubicacion.maps && !alert.ubicacion.open_maps)) {
       return { embed: '', link: '' };
     }
+    if (alert.ubicacion.open_maps) {
+      var osmEmbed = buildOsmEmbedFromUrl(alert.ubicacion.open_maps);
+      return {
+        embed: osmEmbed || alert.ubicacion.open_maps,
+        link: alert.ubicacion.open_maps
+      };
+    }
     var link = alert.ubicacion.maps;
-    return { embed: toEmbedUrl(link), link: link };
+    var queryCoords = extractLatLngFromQuery(link);
+    if (queryCoords) {
+      return { embed: buildOsmEmbedFromLatLng(queryCoords.lat, queryCoords.lng), link: link };
+    }
+    var coords = extractLatLngFromGooglePlace(link);
+    if (coords) {
+      return { embed: buildOsmEmbedFromLatLng(coords.lat, coords.lng), link: link };
+    }
+    var converted = convertGoogleMapsEmbed(link);
+    return { embed: converted || toEmbedUrl(link), link: link };
   }
 
   function renderAlert(alert) {
@@ -337,8 +484,8 @@ window.TvApp = window.TvApp || {};
       locationName.textContent = '';
     }
 
-    if (alert.ubicacion && alert.ubicacion.maps) {
-      locationLink.href = alert.ubicacion.maps;
+    if (alert.ubicacion && (alert.ubicacion.open_maps || alert.ubicacion.maps)) {
+      locationLink.href = alert.ubicacion.open_maps || alert.ubicacion.maps;
       locationLink.className = 'block-link';
     } else if (locationLink) {
       locationLink.className = 'block-link hidden';
@@ -384,10 +531,19 @@ window.TvApp = window.TvApp || {};
       window.TvApp.setHtml(contacts, '<span class="empty">Sin contactos</span>');
     }
 
-    if (alert.ubicacion && alert.ubicacion.maps) {
+    if (alert.ubicacion && (alert.ubicacion.open_maps || alert.ubicacion.maps)) {
       var urls = buildMapUrls(alert);
       mapContainer.className = 'map-shell';
-      mapContainer.innerHTML = '<iframe title="mapa" src="' + urls.embed + '"></iframe>';
+      mapContainer.innerHTML = '<iframe title="mapa" frameborder="0"></iframe>';
+      var frame = mapContainer.getElementsByTagName('iframe')[0];
+      if (frame) {
+        frame.setAttribute('loading', 'lazy');
+        frame.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+        frame.src = urls.embed;
+        setTimeout(function () {
+          frame.src = urls.embed;
+        }, 80);
+      }
     } else {
       mapContainer.className = 'map-shell empty';
       mapContainer.textContent = 'Sin ubicacion.';
